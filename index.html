@@ -190,6 +190,19 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
  .watch-table input{font-size:10px;padding:6px 4px}
 }
 
+
+/* Rule-based market decision engine */
+.decision-inputs{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 0 10px}
+.decision-inputs select{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px;background:#fbfcfe;color:var(--ink);font:inherit;min-height:38px}
+.trade-plan{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
+.trade-stat{background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px;min-width:0}
+.trade-stat span{display:block;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px}
+.trade-stat b{display:block;font-size:14px;margin-top:3px;overflow-wrap:anywhere}
+.decision-reasons{font-size:11px;color:var(--muted);margin-top:9px;line-height:1.45}
+.signal.bullish{background:#edf9f2;border-color:#bce7cd}.signal.bearish{background:#fff0f1;border-color:#f0c6ca}
+.signal.sideways{background:#fff8e8;border-color:#f0dfb4}.signal.wait{background:#f1f7ff;border-color:#d6e5f7}
+@media(max-width:760px){.decision-inputs{grid-template-columns:1fr 1fr;gap:7px}.decision-inputs select{font-size:12px;padding:7px 6px;min-height:36px}.trade-plan{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.trade-stat{padding:8px}.trade-stat b{font-size:13px}}
+
 </style>
 </head>
 <body>
@@ -231,7 +244,15 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   </div><div class="keylevels" id="nifty-keylevels"></div></div>
   <div class="grid columns">
    <div class="card"><h2 class="section-title">Market inputs · NIFTY 50</h2><div class="formgrid" id="nifty-fields"></div><p class="small-note">Enter previous session High, Low, Close and previous CPR values to calculate the CPR relationship. Today's high/low are optional intraday context.</p></div>
-   <div class="card"><h2 class="section-title">Intraday market view</h2><div class="signal" id="nifty-signal"><div class="big">Awaiting inputs</div><p>Enter LTP and VWAP to generate a conditional market view.</p></div><div class="small-note" id="nifty-level-note"></div></div>
+   <div class="card"><h2 class="section-title">Market decision · NIFTY 50</h2>
+    <div class="decision-inputs">
+     <div class="field"><label for="nifty-price-action">Price-action confirmation</label><select id="nifty-price-action"><option value="">Select price action</option><option value="bull">Bullish breakout / hold above TC</option><option value="bear">Bearish breakdown / hold below BC</option><option value="range">Range-bound inside CPR</option><option value="unclear">No clear confirmation</option></select></div>
+     <div class="field"><label for="nifty-oi-bias">Option OI confirmation</label><select id="nifty-oi-bias"><option value="auto">Auto from NIFTY option chain</option><option value="neutral">Neutral / mixed OI</option><option value="bull">Bullish · put support stronger</option><option value="bear">Bearish · call resistance stronger</option></select></div>
+    </div>
+    <div class="signal wait" id="nifty-signal"><div class="big">WAIT</div><p>Enter market data and select price-action confirmation.</p></div>
+    <div class="trade-plan" id="nifty-trade-plan"><div class="trade-stat"><span>Entry</span><b>—</b></div><div class="trade-stat"><span>Stop-loss</span><b>—</b></div><div class="trade-stat"><span>Target 1</span><b>—</b></div><div class="trade-stat"><span>Target 2</span><b>—</b></div></div>
+    <div class="decision-reasons" id="nifty-decision-reasons">Trade levels appear only when the rule checks align. OI input is contextual, not a guarantee. Positive OI additions alone cannot distinguish writing from buying.</div>
+    <div class="small-note" id="nifty-level-note"></div></div>
   </div>
  </section>
 
@@ -250,7 +271,19 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   </div><div class="keylevels" id="sensex-keylevels"></div></div>
   <div class="grid columns">
    <div class="card"><h2 class="section-title">Market inputs · SENSEX</h2><div class="formgrid" id="sensex-fields"></div><p class="small-note">Enter previous session High, Low, Close and previous CPR values to calculate the CPR relationship. Today's high/low are optional intraday context.</p></div>
-   <div class="card"><h2 class="section-title">Intraday market view</h2><div class="signal" id="sensex-signal"><div class="big">Awaiting inputs</div><p>Enter LTP and VWAP to generate a conditional market view.</p></div><div class="small-note" id="sensex-level-note"></div></div>
+   <div class="card"><h2 class="section-title">Market decision · SENSEX</h2>
+    <div class="decision-inputs">
+     <div class="field"><label for="sensex-price-action">Price-action confirmation</label><select id="sensex-price-action"><option value="">Select price action</option><option value="bull">Bullish breakout / hold above TC</option><option value="bear">Bearish breakdown / hold below BC</option><option value="range">Range-bound inside CPR</option><option value="unclear">No clear confirmation</option></select></div>
+     <div class="field"><label for="sensex-oi-bias">Option OI confirmation</label><select id="sensex-oi-bias"><option value="auto">Auto from manual OI changes</option><option value="neutral">Neutral / mixed OI</option><option value="bull">Bullish · put support stronger</option><option value="bear">Bearish · call resistance stronger</option></select></div>
+    </div>
+    <div class="decision-inputs">
+     <div class="field"><label for="sensex-call-oi-change">SENSEX Call OI change</label><input id="sensex-call-oi-change" type="number" step="any" placeholder="Enter change"></div>
+     <div class="field"><label for="sensex-put-oi-change">SENSEX Put OI change</label><input id="sensex-put-oi-change" type="number" step="any" placeholder="Enter change"></div>
+    </div>
+    <div class="signal wait" id="sensex-signal"><div class="big">WAIT</div><p>Enter market data and select price-action confirmation.</p></div>
+    <div class="trade-plan" id="sensex-trade-plan"><div class="trade-stat"><span>Entry</span><b>—</b></div><div class="trade-stat"><span>Stop-loss</span><b>—</b></div><div class="trade-stat"><span>Target 1</span><b>—</b></div><div class="trade-stat"><span>Target 2</span><b>—</b></div></div>
+    <div class="decision-reasons" id="sensex-decision-reasons">Trade levels appear only when the rule checks align. OI input is contextual, not a guarantee. Positive OI additions alone cannot distinguish writing from buying.</div>
+    <div class="small-note" id="sensex-level-note"></div></div>
   </div>
  </section>
 
@@ -282,7 +315,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   </div>
   <div class="grid two">
    <div class="card"><h2 class="section-title">India VIX & volatility context</h2><div class="field"><label>India VIX (manual input)</label><input id="vix" type="number" step=".01" placeholder="e.g. 15.20"></div><div id="vix-explain" class="small-note">Enter the current India VIX value. Higher VIX generally means higher expected volatility, not direction.</div></div>
-   <div class="card"><h2 class="section-title">Option-chain interpretation</h2><div class="signal"><div class="big" id="oi-read">Awaiting option-chain data</div><p id="oi-comment">Enter Call OI and Put OI by strike below. OI walls are descriptive levels, not guaranteed support/resistance.</p></div></div>
+   <div class="card"><h2 class="section-title">Option-chain interpretation</h2><div class="signal"><div class="big" id="oi-read">Awaiting option-chain data</div><p id="oi-comment">Enter Call OI and Put OI by strike below. NIFTY decision engine reads positive OI changes first; if unavailable, it uses PCR as a weak contextual filter. Raw OI additions alone cannot distinguish writing from buying. OI walls are not guaranteed support/resistance.</p></div></div>
   </div>
   <div class="card" style="margin-top:14px"><div class="toolbar"><h2 class="section-title" style="margin:0">NIFTY option-chain OI input</h2><div class="actions"><button class="secondary" id="addRow">Add strike</button><button class="secondary" id="clearRows">Clear rows</button></div></div>
    <div class="table-wrap"><table id="oiTable"><thead><tr><th>Strike</th><th>Call OI</th><th>Put OI</th><th>Call OI change</th><th>Put OI change</th><th></th></tr></thead><tbody></tbody></table></div>
@@ -293,7 +326,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
  <section class="panel" id="guide">
   <div class="grid two">
    <div class="card"><h2 class="section-title">CPR formulas</h2><p><b>Pivot</b> = (Previous High + Previous Low + Previous Close) ÷ 3</p><p><b>BC</b> = (Previous High + Previous Low) ÷ 2</p><p><b>TC</b> = (2 × Pivot) − BC</p><p><b>CPR width</b> = (TC − BC) ÷ Pivot × 100</p><p><b>R1</b> = (2 × Pivot) − Low; <b>S1</b> = (2 × Pivot) − High</p><p><b>R2</b> = Pivot + (High − Low); <b>S2</b> = Pivot − (High − Low)</p><p><b>PDH / PDL</b> = previous day high / low.</p></div>
-   <div class="card"><h2 class="section-title">How to read the dashboard</h2><ul><li>Price above VWAP can indicate intraday strength; below VWAP can indicate weakness.</li><li>Ascending / descending CPR is a directional context, not a standalone signal.</li><li>Narrow CPR may be associated with expansion; wide CPR may be associated with consolidation. Neither guarantees the day type.</li><li>PCR and OI walls depend on expiry, timestamp, and data quality.</li><li>VIX measures expected volatility; it does not tell you bullish or bearish direction.</li><li>Wait for price action and risk-defined confirmation. Avoid trading on one indicator alone.</li></ul></div>
+   <div class="card"><h2 class="section-title">How to read the dashboard</h2><ul><li>Price above VWAP can indicate intraday strength; below VWAP can indicate weakness.</li><li>Ascending / descending CPR is a directional context, not a standalone signal.</li><li>Narrow CPR may be associated with expansion; wide CPR may be associated with consolidation. Neither guarantees the day type.</li><li>PCR and OI walls depend on expiry, timestamp, and data quality.</li><li>VIX measures expected volatility; it does not tell you bullish or bearish direction.</li><li>Wait for price action and risk-defined confirmation. Avoid trading on one indicator alone.</li><li>Market Decision uses CPR position, VWAP, selected price action and OI context. Entry is an LTP reference; targets use next CPR pivot levels or 1R/2R fallback projections. No signal is guaranteed.</li></ul></div>
   </div>
   <div class="card" style="margin-top:14px"><h2 class="section-title">Data & limitations</h2><p>This is a standalone calculation dashboard. It has no live exchange connection, broker login, order placement, or automatic option-chain refresh. To enable real-time updates, connect a licensed market-data/broker API through a secure backend; never place API secrets in browser JavaScript. Exchange/vendor terms and rate limits apply.</p><p class="small-note">Educational tool only. Not investment advice. Options involve substantial risk; verify all values with your broker/exchange before acting.</p></div>
  </section>
@@ -342,7 +375,81 @@ function calc(p){
  }
  $(p+'-signal').innerHTML=`<div class="big">${bias}</div><p>${detail}</p>`;
  $(p+'-level-note').textContent=valid?`Reference: BC ${fmt(bc)} · Pivot ${fmt(pivot)} · TC ${fmt(tc)}. R1 ${fmt(r1)} / S1 ${fmt(s1)}. Levels are calculated from previous-day OHLC.`:'Enter valid previous-day high, low and close to calculate CPR and pivots.';
+ updateDecision(p,{P,V,valid,pivot,bc,tc,r1,r2,s1,s2,pdh,pdl,relation});
 }
+
+// Separate decision layer. It reads existing CPR outputs/inputs but does not alter CPR formulas.
+function getSensexOiBias(){
+ const override=$('sensex-oi-bias').value;
+ if(override!=='auto')return override;
+ const callAdd=parseFloat($('sensex-call-oi-change').value),putAdd=parseFloat($('sensex-put-oi-change').value);
+ if(!Number.isFinite(callAdd)||!Number.isFinite(putAdd)||callAdd<=0&&putAdd<=0)return 'neutral';
+ if(putAdd>callAdd*1.15)return 'bull';
+ if(callAdd>putAdd*1.15)return 'bear';
+ return 'neutral';
+}
+function getNiftyOiBias(){
+ const override=$('nifty-oi-bias').value;
+ if(override!=='auto')return override;
+ let rows=[...$('oiTable').querySelectorAll('tbody tr')].map(tr=>[...tr.querySelectorAll('input')].map(i=>parseFloat(i.value)));
+ let callAdd=rows.reduce((s,r)=>s+(Number.isFinite(r[3])&&r[3]>0?r[3]:0),0);
+ let putAdd=rows.reduce((s,r)=>s+(Number.isFinite(r[4])&&r[4]>0?r[4]:0),0);
+ if(callAdd>0||putAdd>0){if(putAdd>callAdd*1.15)return 'bull';if(callAdd>putAdd*1.15)return 'bear';return 'neutral';}
+ let pcr=Number.isFinite(window.chainPCR)?window.chainPCR:NaN;
+ if(Number.isFinite(pcr)&&pcr>=1.15)return 'bull';
+ if(Number.isFinite(pcr)&&pcr<=0.85)return 'bear';
+ return 'neutral';
+}
+function updateDecision(p,d){
+ const {P,V,valid,pivot,bc,tc,r1,r2,s1,s2,pdh,pdl,relation}=d;
+ const pa=$(p+'-price-action').value;
+ const oi=p==='nifty'?getNiftyOiBias():getSensexOiBias();
+ const signal=$(p+'-signal'),plan=$(p+'-trade-plan'),reason=$(p+'-decision-reasons');
+ const missing=[];
+ if(!valid)missing.push('previous-day high, low and close');
+ if(!Number.isFinite(P))missing.push('current price');
+ if(!Number.isFinite(V))missing.push('VWAP');
+ if(!pa)missing.push('price-action confirmation');
+ if(missing.length){
+  signal.className='signal wait';signal.innerHTML='<div class="big">WAIT</div><p>Missing: '+missing.join(', ')+'.</p>';
+  plan.innerHTML=['Entry','Stop-loss','Target 1','Target 2'].map(x=>`<div class="trade-stat"><span>${x}</span><b>—</b></div>`).join('');
+  reason.textContent='No trade plan until the required data and price-action confirmation are available. NIFTY OI bias is derived from entered option-chain OI changes, or PCR when changes are unavailable.';
+  return;
+ }
+ const aboveTC=P>tc,belowBC=P<bc,aboveVWAP=P>V,belowVWAP=P<V;
+ const bullChecks=[aboveTC,aboveVWAP,pa==='bull',oi==='bull'];
+ const bearChecks=[belowBC,belowVWAP,pa==='bear',oi==='bear'];
+ const bullScore=bullChecks.filter(Boolean).length,bearScore=bearChecks.filter(Boolean).length;
+ let state='WAIT',detail='Signals are mixed. Wait for price to confirm a move beyond CPR and VWAP.',kind='wait';
+ if(pa==='range'&&P>=bc&&P<=tc&&Math.abs(P-V)/P<0.002){state='SIDEWAYS';kind='sideways';detail='Price is inside CPR, near VWAP, and price action is range-bound. Avoid chasing; wait for a clean range break.';}
+ else if(bullScore>=3&&pa==='bull'&&oi!=='bear'){state='BULLISH';kind='bullish';detail=`${bullScore}/4 bullish checks align: ${aboveTC?'above TC':'not above TC'}, ${aboveVWAP?'above VWAP':'not above VWAP'}, bullish price action, ${oi==='bull'?'supportive OI':'OI not opposing'}.`;
+ }
+ else if(bearScore>=3&&pa==='bear'&&oi!=='bull'){state='BEARISH';kind='bearish';detail=`${bearScore}/4 bearish checks align: ${belowBC?'below BC':'not below BC'}, ${belowVWAP?'below VWAP':'not below VWAP'}, bearish price action, ${oi==='bear'?'resistance-side OI':'OI not opposing'}.`;
+ }
+ signal.className='signal '+kind;
+ signal.innerHTML=`<div class="big">${state}</div><p>${detail}</p>`;
+ if(state==='BULLISH'){
+  const entry=P,sl=Math.min(bc,pivot),risk=entry-sl;
+  let targets=[pdh,r1,r2].filter(x=>Number.isFinite(x)&&x>entry).sort((a,b)=>a-b);
+  const safeRisk=risk>0?risk:entry*0.003;
+  if(!targets.length)targets=[entry+safeRisk,entry+2*safeRisk];
+  if(targets.length===1)targets.push(Math.max(targets[0]+safeRisk,entry+2*safeRisk));
+  plan.innerHTML=[['Entry reference',entry],['Stop-loss',sl],['Target 1',targets[0]],['Target 2',targets[1]]].map(([k,v])=>`<div class="trade-stat"><span>${k}</span><b>${fmt(v)}</b></div>`).join('');
+  reason.textContent=`Entry reference is current LTP; prefer a pullback/retest that holds TC rather than chasing. Stop is below CPR support. Targets use the next calculated resistance levels where available; otherwise 1R/2R projections. OI context: ${oi}.`;
+ }else if(state==='BEARISH'){
+  const entry=P,sl=Math.max(tc,pivot),risk=sl-entry;
+  let targets=[pdl,s1,s2].filter(x=>Number.isFinite(x)&&x<entry).sort((a,b)=>b-a);
+  const safeRisk=risk>0?risk:entry*0.003;
+  if(!targets.length)targets=[entry-safeRisk,entry-2*safeRisk];
+  if(targets.length===1)targets.push(Math.min(targets[0]-safeRisk,entry-2*safeRisk));
+  plan.innerHTML=[['Entry reference',entry],['Stop-loss',sl],['Target 1',targets[0]],['Target 2',targets[1]]].map(([k,v])=>`<div class="trade-stat"><span>${k}</span><b>${fmt(v)}</b></div>`).join('');
+  reason.textContent=`Entry reference is current LTP; prefer a failed retest of BC rather than chasing. Stop is above CPR resistance. Targets use the next calculated support levels where available; otherwise 1R/2R projections. OI context: ${oi}.`;
+ }else{
+  plan.innerHTML=['Entry','Stop-loss','Target 1','Target 2'].map(x=>`<div class="trade-stat"><span>${x}</span><b>—</b></div>`).join('');
+  reason.textContent=state==='SIDEWAYS'?'No directional trade plan: wait for a confirmed breakout and retest outside the CPR range.':'No trade levels generated because the required directional confirmations do not agree. Do not force a trade.';
+ }
+}
+
 function setupRows(rows=[['22500',120000,85000,0,0],['22600',90000,110000,0,0],['22700',70000,145000,0,0],['22800',150000,190000,0,0],['22900',210000,160000,0,0],['23000',280000,220000,0,0]]){
  let tb=$('oiTable').querySelector('tbody');tb.innerHTML='';
  rows.forEach(r=>addOiRow(...r));
@@ -360,7 +467,7 @@ function updateOI(){
  $('oi-comment').textContent=Number.isFinite(pcr)?`PCR ${pcr.toFixed(2)}. Highest Call OI: ${callWall?callWall[0]:'—'}; highest Put OI: ${putWall?putWall[0]:'—'}. Interpret with OI change, spot price and expiry context.`:'Enter Call OI and Put OI by strike below.';
  ['nifty','sensex'].forEach(calc);
 }
-function reset(){['nifty','sensex'].forEach(p=>{defs[p].forEach(([k])=>$(p+'-'+k).value='');calc(p)});$('vix').value='';setupRows([]);updateVix();}
+function reset(){['nifty','sensex'].forEach(p=>{defs[p].forEach(([k])=>$(p+'-'+k).value='');$(p+'-price-action').value='';$(p+'-oi-bias').value='auto';if(p==='sensex'){$('sensex-call-oi-change').value='';$('sensex-put-oi-change').value='';}calc(p)});$('vix').value='';setupRows([]);updateVix();}
 function updateVix(){let v=parseFloat($('vix').value);$('vix-out').textContent=Number.isFinite(v)?v.toFixed(2):'—';let t=!Number.isFinite(v)?'Enter VIX':v<13?'Relatively low volatility':v<20?'Moderate volatility':'Elevated volatility';$('vix-tag').textContent=t;$('vix-explain').textContent=Number.isFinite(v)?`${t}. VIX is a volatility gauge, not a directional signal.`:'Enter the current India VIX value. Higher VIX generally means higher expected volatility, not direction.';}
 function loadDemo(){
  const d={nifty:{high:23020,low:22714.8,close:22936.75,ltp:22964.5,vwap:22940,todayHigh:23010,todayLow:22850,prevTC:22880,prevBC:22830,prevPivot:22855,prevClose:22936.75},sensex:{high:74680,low:73695.74,close:74151.04,ltp:74151.04,vwap:74080,todayHigh:74500,todayLow:73800,prevTC:73900,prevBC:73800,prevPivot:73850,prevClose:74151.04}};
@@ -375,6 +482,8 @@ $('giftChange').addEventListener('input',()=>{let v=parseFloat($('giftChange').v
 $('giftNifty').addEventListener('input',()=>{let g=parseFloat($('giftNifty').value),v=parseFloat($('giftChange').value);$('gift-out').textContent=Number.isFinite(g)?fmt(g)+(Number.isFinite(v)?` (${v>=0?'+':''}${fmt(v)})`:''):'—';});
 
 $('exportBtn').addEventListener('click',()=>{let lines=[['Market','Metric','Value']];['nifty','sensex'].forEach(p=>{let h=val(p,'high'),l=val(p,'low'),c=val(p,'close'),pivot=(h+l+c)/3,bc=(h+l)/2,tc=2*pivot-bc;[['LTP',val(p,'ltp')],['VWAP',val(p,'vwap')],['TC',tc],['Pivot',pivot],['BC',bc],['CPR Width %',(Math.abs(tc-bc)/pivot*100)],['CPR relationship',$ (p+'-relation').textContent]].forEach(([k,v])=>lines.push([p.toUpperCase(),k,v]));});lines.push(['INDIA','VIX',$('vix').value],['NIFTY','PCR',$('chain-pcr').textContent],['NIFTY','Call OI wall',$('oi-walls').textContent]);let csv=lines.map(r=>r.map(x=>`"${String(x??'').replace(/"/g,'""')}"`).join(',')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='cpr-market-report.csv';a.click();URL.revokeObjectURL(a.href);});
+['nifty','sensex'].forEach(p=>{['price-action','oi-bias'].forEach(k=>$(p+'-'+k).addEventListener('change',()=>calc(p)));});
+['sensex-call-oi-change','sensex-put-oi-change'].forEach(id=>$(id).addEventListener('input',()=>calc('sensex')));
 ['nifty','sensex'].forEach(makeFields);setupRows([]);updateVix();$('marketClock').textContent=new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',dateStyle:'medium',timeStyle:'short'}).format(new Date())+' IST';
 </script>
 </body></html>
