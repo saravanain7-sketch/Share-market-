@@ -1,4 +1,5 @@
-CPR Market Intelligence Dashboard - Final Android UI refinement
+CPR Market Intelligence Dashboard - CPR spacing refinement
 
-Replace the current GitHub Pages index.html with this index.html and redeploy.
-Mobile changes: all four tabs (NIFTY 50, SENSEX, Option Chain & OI, Method & Help) are displayed in a 2-column x 2-row grid with no horizontal scrolling. CPR key levels use a consistent 3-column aligned grid. Desktop layout and all JavaScript calculations are unchanged. This remains a manual/imported-data dashboard; no live exchange feed is included.
+Replace the GitHub Pages index.html with this file and redeploy.
+Changes: reduced vertical spacing in CPR support/resistance key levels; kept the working 2x2 mobile navigation and existing responsive layout.
+No JavaScript or market-calculation code was changed.
