@@ -1,5 +1,6 @@
-CPR Market Intelligence Dashboard - CPR spacing refinement
+CPR Market Intelligence - Combined One-Page Dashboard
 
-Replace the GitHub Pages index.html with this file and redeploy.
-Changes: reduced vertical spacing in CPR support/resistance key levels; kept the working 2x2 mobile navigation and existing responsive layout.
-No JavaScript or market-calculation code was changed.
+Deploy by replacing your GitHub Pages index.html with this index.html.
+Both NIFTY 50 and SENSEX appear together on one scrolling report page. Includes CPR TC/Pivot/BC, support/resistance, CPR width/relationship, day range, VWAP, option-chain PCR/OI walls, India VIX, manual GIFT NIFTY and straddle fields, and editable narrow-CPR stock/sector watchlists.
+
+Market values and watchlists are manual inputs. No live NSE/broker API is connected. Existing CPR and OI calculation logic is retained; additions are display fields only.

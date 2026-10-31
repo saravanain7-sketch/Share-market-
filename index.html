@@ -158,27 +158,73 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   .keylevels div b{font-size:10px}
 }
 
+
+/* Combined one-page CPR report layout */
+.report-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.report-nav .tab{text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center}
+.panel{display:block!important;margin:0 0 15px}
+.panel .metrics{grid-template-columns:repeat(7,minmax(0,1fr))}
+.market-context{margin:0 0 14px}
+.context-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.context-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.context-item label{display:block;font-size:10px;font-weight:800;color:var(--muted);margin-bottom:4px;text-transform:uppercase}
+.context-item input,.watch-table input{width:100%;min-width:0;border:1px solid var(--line);border-radius:7px;padding:7px;background:#fbfcfe;color:var(--ink);font:inherit}
+.context-foot{display:flex;gap:20px;flex-wrap:wrap;margin-top:10px;font-size:11px;color:var(--muted)}
+.watchlist-section{margin:0 0 14px}
+.watch-title{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--navy);margin:0 0 7px}
+.watch-table{min-width:0}
+.watch-table th,.watch-table td{padding:6px}
+.watch-table input{font-size:11px;padding:6px}
+@media(max-width:950px){
+ .panel .metrics{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .report-nav{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:760px){
+ .report-nav{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .panel .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .context-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .context-foot{gap:8px 14px}
+ .watchlist-section .two{grid-template-columns:1fr}
+ .watch-table{min-width:0}
+ .watch-table th,.watch-table td{padding:4px}
+ .watch-table input{font-size:10px;padding:6px 4px}
+}
+
 </style>
 </head>
 <body>
 <header>
- <div class="brand"><h1>CPR Market Intelligence</h1><p>NIFTY 50 · SENSEX · Intraday decision support</p></div>
+ <div class="brand"><h1>CPR Market Intelligence</h1><p>NIFTY 50 + SENSEX · Combined pre-market & intraday report</p></div>
  <div class="header-right"><span class="pill" id="marketClock">IST</span><span class="pill">Manual / imported data mode</span></div>
 </header>
 <main>
  <div class="notice"><b>Data integrity:</b> This dashboard calculates from values you enter or import. It does not contain a broker connection or live NSE feed. Demo values are illustrative only—not current prices or trade recommendations.</div>
  <div class="toolbar">
-  <div class="tabs"><button class="tab active" data-tab="nifty">NIFTY 50</button><button class="tab" data-tab="sensex">SENSEX</button><button class="tab" data-tab="options">Option Chain & OI</button><button class="tab" data-tab="guide">Method & Help</button></div>
+  <nav class="tabs report-nav" aria-label="Dashboard sections"><a class="tab" href="#nifty">NIFTY 50</a><a class="tab" href="#sensex">SENSEX</a><a class="tab" href="#options">Option Chain & OI</a><a class="tab" href="#guide">Method & Help</a></nav>
   <div class="actions"><button class="secondary" id="demoBtn">Load demo values</button><button class="secondary" id="resetBtn">Reset inputs</button><button id="exportBtn">Export report CSV</button></div>
  </div>
 
- <section class="panel active" id="nifty">
+ 
+<section class="card market-context" aria-label="Market-wide context">
+ <div class="context-heading"><h2 class="section-title">Market-wide indicators</h2><span class="small-note">Manual inputs · update from your market source</span></div>
+ <div class="context-grid">
+  <div class="context-item"><label for="giftNifty">GIFT NIFTY</label><input id="giftNifty" type="number" step="any" placeholder="Enter value"></div>
+  <div class="context-item"><label for="giftChange">GIFT NIFTY change</label><input id="giftChange" type="number" step="any" placeholder="Enter points"></div>
+  <div class="context-item"><label for="niftyStraddle">NIFTY ATM straddle</label><input id="niftyStraddle" type="number" step="any" placeholder="Enter premium"></div>
+  <div class="context-item"><label for="sensexStraddle">SENSEX ATM straddle</label><input id="sensexStraddle" type="number" step="any" placeholder="Enter premium"></div>
+ </div>
+ <div class="context-foot"><span>GIFT NIFTY: <b id="gift-out">—</b></span><span>NIFTY straddle: <b id="nifty-straddle-out">—</b></span><span>SENSEX straddle: <b id="sensex-straddle-out">—</b></span></div>
+</section>
+
+<section class="panel active" id="nifty">
   <div class="grid metrics">
    <div class="card"><div class="metric-label">NIFTY 50 LTP</div><div class="metric-value" id="nifty-ltp-out">—</div><div class="metric-sub" id="nifty-change">Enter current price</div></div>
    <div class="card"><div class="metric-label">CPR Width</div><div class="metric-value" id="nifty-width">—</div><div class="metric-sub" id="nifty-width-tag">Based on previous day</div></div>
    <div class="card"><div class="metric-label">CPR Relationship</div><div class="metric-value" id="nifty-relation">—</div><div class="metric-sub">Compared with prior session CPR</div></div>
    <div class="card"><div class="metric-label">VWAP Position</div><div class="metric-value" id="nifty-vwap-pos">—</div><div class="metric-sub" id="nifty-vwap-sub">Price vs VWAP</div></div>
    <div class="card"><div class="metric-label">PCR</div><div class="metric-value" id="nifty-pcr-out">—</div><div class="metric-sub" id="nifty-pcr-tag">OI-based sentiment</div></div>
+   <div class="card"><div class="metric-label">DAY RANGE</div><div class="metric-value" id="nifty-day-range">—</div><div class="metric-sub">Today's high − low</div></div>
+   <div class="card"><div class="metric-label">OI WALLS</div><div class="metric-value" id="nifty-oi-walls">—</div><div class="metric-sub">Call / Put max OI strikes</div></div>
   </div>
   <div class="card" style="margin-bottom:14px"><h2 class="section-title">Today's CPR levels</h2><div class="grid levels">
    <div class="level"><span>TC</span><strong id="nifty-tc">—</strong></div><div class="level"><span>PIVOT</span><strong id="nifty-pivot">—</strong></div><div class="level"><span>BC</span><strong id="nifty-bc">—</strong></div>
@@ -196,6 +242,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
    <div class="card"><div class="metric-label">CPR Relationship</div><div class="metric-value" id="sensex-relation">—</div><div class="metric-sub">Compared with prior session CPR</div></div>
    <div class="card"><div class="metric-label">VWAP Position</div><div class="metric-value" id="sensex-vwap-pos">—</div><div class="metric-sub" id="sensex-vwap-sub">Price vs VWAP</div></div>
    <div class="card"><div class="metric-label">PCR</div><div class="metric-value" id="sensex-pcr-out">—</div><div class="metric-sub" id="sensex-pcr-tag">OI-based sentiment</div></div>
+   <div class="card"><div class="metric-label">DAY RANGE</div><div class="metric-value" id="sensex-day-range">—</div><div class="metric-sub">Today's high − low</div></div>
+   <div class="card"><div class="metric-label">OI WALLS</div><div class="metric-value" id="sensex-oi-walls">—</div><div class="metric-sub">Call / Put max OI strikes</div></div>
   </div>
   <div class="card" style="margin-bottom:14px"><h2 class="section-title">Today's CPR levels</h2><div class="grid levels">
    <div class="level"><span>TC</span><strong id="sensex-tc">—</strong></div><div class="level"><span>PIVOT</span><strong id="sensex-pivot">—</strong></div><div class="level"><span>BC</span><strong id="sensex-bc">—</strong></div>
@@ -206,7 +254,25 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   </div>
  </section>
 
- <section class="panel" id="options">
+ 
+<section class="card watchlist-section" id="narrow-watchlist">
+ <h2 class="section-title">Narrow CPR watchlist</h2>
+ <p class="small-note">Manually enter stocks and sectors identified from your screener. No live stock/sector feed is connected.</p>
+ <div class="grid two">
+  <div><h3 class="watch-title">Top narrow CPR stocks</h3><div class="table-wrap"><table class="watch-table"><thead><tr><th>Stock</th><th>Price</th><th>CPR width %</th></tr></thead><tbody>
+   <tr><td><input placeholder="Symbol"></td><td><input type="number" placeholder="Price"></td><td><input type="number" step=".01" placeholder="Width %"></td></tr>
+   <tr><td><input placeholder="Symbol"></td><td><input type="number" placeholder="Price"></td><td><input type="number" step=".01" placeholder="Width %"></td></tr>
+   <tr><td><input placeholder="Symbol"></td><td><input type="number" placeholder="Price"></td><td><input type="number" step=".01" placeholder="Width %"></td></tr>
+  </tbody></table></div></div>
+  <div><h3 class="watch-title">Top narrow CPR sectors</h3><div class="table-wrap"><table class="watch-table"><thead><tr><th>Sector</th><th>Index value</th><th>CPR width %</th></tr></thead><tbody>
+   <tr><td><input placeholder="Sector"></td><td><input type="number" placeholder="Value"></td><td><input type="number" step=".01" placeholder="Width %"></td></tr>
+   <tr><td><input placeholder="Sector"></td><td><input type="number" placeholder="Value"></td><td><input type="number" step=".01" placeholder="Width %"></td></tr>
+   <tr><td><input placeholder="Sector"></td><td><input type="number" placeholder="Value"></td><td><input type="number" step=".01" placeholder="Width %"></td></tr>
+  </tbody></table></div></div>
+ </div>
+</section>
+
+<section class="panel" id="options">
   <div class="grid metrics">
    <div class="card"><div class="metric-label">India VIX</div><div class="metric-value" id="vix-out">—</div><div class="metric-sub" id="vix-tag">Enter VIX</div></div>
    <div class="card"><div class="metric-label">NIFTY Total Call OI</div><div class="metric-value" id="call-total">0</div><div class="metric-sub">Rows in option chain</div></div>
@@ -226,7 +292,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
  <section class="panel" id="guide">
   <div class="grid two">
-   <div class="card"><h2 class="section-title">CPR formulas</h2><p><b>Pivot</b> = (Previous High + Previous Low + Previous Close) ÷ 3</p><p><b>BC</b> = (Previous High + Previous Low) ÷ 2</p><p><b>TC</b> = (2 × Pivot) − BC</p><p><b>CPR width</b> = (TC − BC) ÷ Pivot × 100</p><p><b>R1 / S1</b> = 2 × Pivot − Low / 2 × Pivot − High</p><p><b>R2 / S2</b> = Pivot + (High − Low) / Pivot − (High − Low)</p><p><b>PDH / PDL</b> = previous day high / low.</p></div>
+   <div class="card"><h2 class="section-title">CPR formulas</h2><p><b>Pivot</b> = (Previous High + Previous Low + Previous Close) ÷ 3</p><p><b>BC</b> = (Previous High + Previous Low) ÷ 2</p><p><b>TC</b> = (2 × Pivot) − BC</p><p><b>CPR width</b> = (TC − BC) ÷ Pivot × 100</p><p><b>R1</b> = (2 × Pivot) − Low; <b>S1</b> = (2 × Pivot) − High</p><p><b>R2</b> = Pivot + (High − Low); <b>S2</b> = Pivot − (High − Low)</p><p><b>PDH / PDL</b> = previous day high / low.</p></div>
    <div class="card"><h2 class="section-title">How to read the dashboard</h2><ul><li>Price above VWAP can indicate intraday strength; below VWAP can indicate weakness.</li><li>Ascending / descending CPR is a directional context, not a standalone signal.</li><li>Narrow CPR may be associated with expansion; wide CPR may be associated with consolidation. Neither guarantees the day type.</li><li>PCR and OI walls depend on expiry, timestamp, and data quality.</li><li>VIX measures expected volatility; it does not tell you bullish or bearish direction.</li><li>Wait for price action and risk-defined confirmation. Avoid trading on one indicator alone.</li></ul></div>
   </div>
   <div class="card" style="margin-top:14px"><h2 class="section-title">Data & limitations</h2><p>This is a standalone calculation dashboard. It has no live exchange connection, broker login, order placement, or automatic option-chain refresh. To enable real-time updates, connect a licensed market-data/broker API through a secure backend; never place API secrets in browser JavaScript. Exchange/vendor terms and rate limits apply.</p><p class="small-note">Educational tool only. Not investment advice. Options involve substantial risk; verify all values with your broker/exchange before acting.</p></div>
@@ -263,6 +329,7 @@ function calc(p){
  $(p+'-vwap-pos').textContent=vp;$(p+'-vwap-pos').className='metric-value '+(vp==='Above VWAP'?'positive':vp==='Below VWAP'?'negative':'');
  $(p+'-vwap-sub').textContent=Number.isFinite(P)&&Number.isFinite(V)?`LTP ${P>=V?'▲':'▼'} VWAP ${fmt(V)}`:'Enter LTP and VWAP';
  let pcr=p==='nifty'&&Number.isFinite(window.chainPCR)?window.chainPCR:NaN;$(p+'-pcr-out').textContent=Number.isFinite(pcr)?pcr.toFixed(2):'—';$(p+'-pcr-tag').textContent=p==='sensex'?'NIFTY option-chain PCR not shown':(Number.isFinite(pcr)?(pcr>1.2?'Put OI higher':pcr<.8?'Call OI higher':'Balanced OI'):'Option-chain inputs');
+ let dayRange=val(p,'todayHigh')-val(p,'todayLow');$(p+'-day-range').textContent=Number.isFinite(dayRange)?fmt(dayRange):'—';
  $(p+'-tc').textContent=fmt(tc);$(p+'-pivot').textContent=fmt(pivot);$(p+'-bc').textContent=fmt(bc);
  $(p+'-keylevels').innerHTML=[['R2',r2],['R1',r1],['PDH',pdh],['PDL',pdl],['S1',s1],['S2',s2],['RANGE',valid?H-L:NaN]].map(([a,b])=>`<div><span>${a}</span><b>${fmt(b)}</b></div>`).join('');
  let bias='Wait for confirmation',detail='Enter LTP, VWAP and valid previous-day OHLC data.';
@@ -288,6 +355,7 @@ function updateOI(){
  window.chainPCR=pcr;$('call-total').textContent=ct.toLocaleString('en-IN');$('put-total').textContent=pt.toLocaleString('en-IN');$('chain-pcr').textContent=Number.isFinite(pcr)?pcr.toFixed(2):'—';
  let callWall=rows.filter(r=>Number.isFinite(r[0])&&Number.isFinite(r[1])).sort((a,b)=>b[1]-a[1])[0],putWall=rows.filter(r=>Number.isFinite(r[0])&&Number.isFinite(r[2])).sort((a,b)=>b[2]-a[2])[0];
  $('oi-walls').textContent=callWall&&putWall?`${callWall[0]} / ${putWall[0]}`:'—';
+ ['nifty','sensex'].forEach(p=>{let el=$(p+'-oi-walls');if(el)el.textContent=callWall&&putWall?`${callWall[0]} / ${putWall[0]}`:'—';});
  $('oi-read').textContent=Number.isFinite(pcr)?(pcr>1.2?'Put OI dominant':pcr<.8?'Call OI dominant':'OI relatively balanced'):'Awaiting option-chain data';
  $('oi-comment').textContent=Number.isFinite(pcr)?`PCR ${pcr.toFixed(2)}. Highest Call OI: ${callWall?callWall[0]:'—'}; highest Put OI: ${putWall?putWall[0]:'—'}. Interpret with OI change, spot price and expiry context.`:'Enter Call OI and Put OI by strike below.';
  ['nifty','sensex'].forEach(calc);
@@ -298,8 +366,14 @@ function loadDemo(){
  const d={nifty:{high:23020,low:22714.8,close:22936.75,ltp:22964.5,vwap:22940,todayHigh:23010,todayLow:22850,prevTC:22880,prevBC:22830,prevPivot:22855,prevClose:22936.75},sensex:{high:74680,low:73695.74,close:74151.04,ltp:74151.04,vwap:74080,todayHigh:74500,todayLow:73800,prevTC:73900,prevBC:73800,prevPivot:73850,prevClose:74151.04}};
  Object.entries(d).forEach(([p,o])=>Object.entries(o).forEach(([k,v])=>$(p+'-'+k).value=v));calc('nifty');calc('sensex');$('vix').value=15.12;updateVix();setupRows();
 }
-document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab));}));
+// Single-page report: navigation links jump to sections; all report panels remain visible.
 $('demoBtn').addEventListener('click',loadDemo);$('resetBtn').addEventListener('click',reset);$('addRow').addEventListener('click',()=>addOiRow());$('clearRows').addEventListener('click',()=>setupRows([]));$('vix').addEventListener('input',updateVix);
+[['giftNifty','gift-out'],['niftyStraddle','nifty-straddle-out'],['sensexStraddle','sensex-straddle-out']].forEach(([input,out])=>{
+ $(input).addEventListener('input',()=>{let v=parseFloat($(input).value);$(out).textContent=Number.isFinite(v)?fmt(v):'—';});
+});
+$('giftChange').addEventListener('input',()=>{let v=parseFloat($('giftChange').value),g=parseFloat($('giftNifty').value);$('gift-out').textContent=Number.isFinite(g)?fmt(g)+(Number.isFinite(v)?` (${v>=0?'+':''}${fmt(v)})`:''):'—';});
+$('giftNifty').addEventListener('input',()=>{let g=parseFloat($('giftNifty').value),v=parseFloat($('giftChange').value);$('gift-out').textContent=Number.isFinite(g)?fmt(g)+(Number.isFinite(v)?` (${v>=0?'+':''}${fmt(v)})`:''):'—';});
+
 $('exportBtn').addEventListener('click',()=>{let lines=[['Market','Metric','Value']];['nifty','sensex'].forEach(p=>{let h=val(p,'high'),l=val(p,'low'),c=val(p,'close'),pivot=(h+l+c)/3,bc=(h+l)/2,tc=2*pivot-bc;[['LTP',val(p,'ltp')],['VWAP',val(p,'vwap')],['TC',tc],['Pivot',pivot],['BC',bc],['CPR Width %',(Math.abs(tc-bc)/pivot*100)],['CPR relationship',$ (p+'-relation').textContent]].forEach(([k,v])=>lines.push([p.toUpperCase(),k,v]));});lines.push(['INDIA','VIX',$('vix').value],['NIFTY','PCR',$('chain-pcr').textContent],['NIFTY','Call OI wall',$('oi-walls').textContent]);let csv=lines.map(r=>r.map(x=>`"${String(x??'').replace(/"/g,'""')}"`).join(',')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='cpr-market-report.csv';a.click();URL.revokeObjectURL(a.href);});
 ['nifty','sensex'].forEach(makeFields);setupRows([]);updateVix();$('marketClock').textContent=new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',dateStyle:'medium',timeStyle:'short'}).format(new Date())+' IST';
 </script>
